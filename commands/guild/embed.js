@@ -1,186 +1,175 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
-const { MessageEmbedVideo } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('embed')
-    .setDescription('Pick character name and move, to get a response with all available move data.')
+    .setDescription('Add character name and move, to get a response with all available move data')
     .addStringOption(character =>
   		character.setName('character')
         .setAutocomplete(true)
-  			.setDescription('The character name (e.g. Kyo, Iori).')
+  			.setDescription('The character name (e.g. Ash, Iori, K)')
   			.setRequired(true))
     .addStringOption(move =>
   		move.setName('move')
         .setAutocomplete(true)
-  			.setDescription('The move name or input.')
+  			.setDescription('The move input (e.g. 2C, 236A, close B)')
   			.setRequired(true)),
   async execute(interaction) {
-    const character = this.getCharacter(interaction.options.getString('character'));
+    const char = interaction.options.getString('character');
     const move = interaction.options.getString('move');
     // Load frame data json.
-    fs.readFile("./assets/framedata02um.json", "utf8", (err, jsonObject) => {
+    fs.readFile("./assets/framedata.json", "utf8", (err, jsonObject) => {
       if (err) {
-        return interaction.reply('Could not load framedata file. Refer to the [Google sheet](https://docs.google.com/spreadsheets/d/1lzpQMoGAboJezLT9WRd3O-vlNDNRlgF_47ShtBGZ3G4) for the data.');
+        // console.log("Error reading file from disk:", err);
+        return interaction.reply('Could not load frame data file. Refer to the [Google sheet](https://docs.google.com/spreadsheets/d/1uPQlyMB8pJhCILH0BYZNhJAO2cNq0aEZt_ifYQ6-uiI) for the data.');
       }
       try {
-        console.log(character, move)
-        
         let data = JSON.parse(jsonObject);
+        // Capitilize first letter of character name.
+        let character = char.charAt(0).toUpperCase() + char.slice(1);
+        // Temp: validate king of dinosaurs weird name.
+        if (character === 'King of dinosaurs' ||
+            character === 'Kod' ||
+            character === 'King of Dinosaurs' ||
+            character === 'Dinosaur') {
+          character = 'KODino'
+            }
+        // If character not found, exit.
         if (data.hasOwnProperty(character) === false) {
-          return interaction.reply('Could not find character: ' + character + '. Refer to the [Google sheet](https://docs.google.com/spreadsheets/d/1lzpQMoGAboJezLT9WRd3O-vlNDNRlgF_47ShtBGZ3G4) for available characters.');
+          return interaction.reply('Could not find character: ' + character + '. Refer to the [Google sheet](https://docs.google.com/spreadsheets/d/1uPQlyMB8pJhCILH0BYZNhJAO2cNq0aEZt_ifYQ6-uiI) for available characters.');
         }
-        if (data[character].hasOwnProperty(move) === false) {
-          return interaction.reply('Could not find specified move: ' + move + ' for ' + character + '. Refer to the [Google sheet](https://docs.google.com/spreadsheets/d/1lzpQMoGAboJezLT9WRd3O-vlNDNRlgF_47ShtBGZ3G4) for available moves.');
+        // Trim extra whitespaces from move.
+        let parsedMove = move.trim();
+        let singleButton = false
+        // Check if single button passed.
+        if (parsedMove.match(/^[+\-aAbBcCdD() .]+$/g)) {
+          singleButton = true
+          // console.log(parsedMove)
+          // Preppend "far" to return valid value.
+          parsedMove = (parsedMove === 'cd' || parsedMove === 'CD') ? parsedMove : 'far ' + parsedMove;
         }
-        
-        let moveData = data[character][move];
-        const startup = (moveData['Startup (F)'] !== null) ? moveData['Startup (F)'].toString() : '-';
-        const active = (moveData['Active (F)'] !== null) ? moveData['Active (F)'].toString() : '-';
-        const recovery = (moveData['Recovery (F)'] !== null) ? moveData['Recovery (F)'].toString() : '-';
-        const oh = (moveData['On Hit (F)'] !== null) ? moveData['On Hit (F)'].toString() : '-';
-        const ob = (moveData['On Guard (F)'] !== null) ? moveData['On Guard (F)'].toString() : '-';
-        const notes = (moveData['Notes'] !== null) ? moveData['Notes'].toString() : 'No notes found.';
-        const dmg = (moveData['Damage'] !== null) ? moveData['Damage'].toString() : '-';
-        const link = encodeURIComponent(character);
-        const img = this.getCharacterImg(character);
+        // console.log(parsedMove)
+        // Convert dots into whitespaces.
+        parsedMove = parsedMove.replace('.', ' ')
+        // Trim whitespaces and add caps, turning "236 a" into "236A".
+        if (parsedMove.match(/^[\d+ $+\-aAbBcCdD().]+$/g) ) {
+          parsedMove = parsedMove.toUpperCase()
+          parsedMove = parsedMove.replace(' ', '')
+          // console.log("Is this still useful? " + parsedMove)
+        }
+        console.log(character)
+        console.log(parsedMove)
+        let escapedMoves = ''
+        const moveArray = parsedMove.split(" ")
+        moveArray.forEach((element) => {
+          // Turn ABCD to uppercase if they are not.
+          if (element.match(/^[+\-aAbBcCdD() .]+$/g) ) {
+            element = element.toUpperCase()
+          }
+          escapedMoves += element + ' ';
+        });
+        escapedMoves = escapedMoves.trimEnd();
+        // If move not found, exit.
+        if (data[character].hasOwnProperty(escapedMoves) === false) {
+          return interaction.reply('Could not find specified move: ' + move + '. Refer to the [Google sheet](https://docs.google.com/spreadsheets/d/1uPQlyMB8pJhCILH0BYZNhJAO2cNq0aEZt_ifYQ6-uiI) for available data.');
+        }
+        let moveData = data[character][escapedMoves];
+        const startup = (moveData['START UP'] !== null) ? moveData['START UP'].toString() : '-';
+        const oh = (moveData.HIT !== null) ? moveData.HIT.toString() : '-';
+        const ob = (moveData.BLOCK !== null) ? moveData.BLOCK.toString() : '-';
+        const notes = (moveData.NOTES !== null) ? moveData.NOTES.toString() : 'No notes found.';
+        const dmg = (moveData.DAMAGE !== null) ? moveData.DAMAGE.toString() : '-';
+        const stun = (moveData.STUN !== null) ? moveData.STUN.toString() : '-';
+        const hits = (moveData.HITS !== null) ? moveData.HITS.toString() : '-';
+        const guardDmg = (moveData.GUARDDMG !== null) ? moveData.GUARDDMG.toString() : '-';
+        // Get lowercase trimmed character name for official site url.
+        let lowerCaseChar = character.toLowerCase();
+        lowerCaseChar = lowerCaseChar.split(/\s+/).join('');
+        // Get character number for thumbnail.
+        const charNo = this.getCharacterNumber(character);
         // console.log(charNo);
-        const embeds = [];
         const embed = new MessageEmbed()
           .setColor('#0x1a2c78')
           .setTitle(character)
-          .setURL('https://dreamcancel.com/wiki/The_King_of_Fighters_2002_UM/' + link)
-          .setAuthor({ name: move, iconURL: 'https://pbs.twimg.com/profile_images/1150082025673625600/m1VyNZtc_400x400.png', url: 'https://docs.google.com/spreadsheets/d/1lzpQMoGAboJezLT9WRd3O-vlNDNRlgF_47ShtBGZ3G4' })
+          .setURL('https://www.snk-corp.co.jp/us/games/kof-xv/characters/characters_' + lowerCaseChar + '.php')
+          .setAuthor({ name: escapedMoves, iconURL: 'https://pbs.twimg.com/profile_images/1150082025673625600/m1VyNZtc_400x400.png', url: 'https://docs.google.com/spreadsheets/d/1uPQlyMB8pJhCILH0BYZNhJAO2cNq0aEZt_ifYQ6-uiI' })
           // .setDescription('Move input')
-          .setThumbnail('https://tiermaker.com/images/chart/chart/the-king-of-fighters-2002-um-characters-137019/64px-portraitkof2002um' + img + 'png.png')
+          .setThumbnail('https://www.snk-corp.co.jp/us/games/kof-xv/img/main/top_slider' + charNo + '.png')
           .addFields(
             { name: 'Startup', value: startup, inline: true },
-            { name: 'Active', value: active, inline: true },
-            { name: 'Recovery', value: recovery, inline: true },
-            { name: '\u200B', value: '\u200B' },
-            { name: 'Damage', value: dmg, inline: true },
             { name: 'On hit', value: oh, inline: true },
             { name: 'On block', value: ob, inline: true },
-            { name: '\u200B', value: '\u200B' },
+            // { name: '\u200B', value: '\u200B' },
+            { name: 'Damage', value: dmg, inline: true },
+            { name: 'Stun', value: stun, inline: true },
+            // { name: '\u200B', value: '\u200B' },
+            { name: 'Block', value: hits, inline: true },
+            { name: 'Guard damage', value: guardDmg, inline: true },
+            // { name: '\u200B', value: '\u200B' },
             { name: 'Notes', value: notes },
+            // { name: '\u200B', value: '\u200B' },
+            { name: 'Framedata Android app now available!', value: 'https://play.google.com/store/apps/details?id=com.framedata.fof' },
+            // { name: '\u200B', value: '\u200B' },
             // { name: 'Inline field title', value: 'Some value here', inline: true },
           )
-          .setFooter({ text: 'Got feedback? Join the 02UM server: discord.gg/8JNXHxf', iconURL: 'https://cdn.iconscout.com/icon/free/png-128/discord-3-569463.png' });
-          (moveData['Image'] != null) ? embed.setImage(moveData['Image']) : embed.addField('No image was found for this move', 'Feel free to share with Franck Frost if you have one.', true);
-        embeds.push(embed);
-        if (moveData['Image1'] != null) {
-          const embed1 = new MessageEmbed().setImage(moveData['Image1']);
-          embeds.push(embed1);
-        }
-        if (moveData['Image2'] != null) {
-          const embed2 = new MessageEmbed().setImage(moveData['Image2']);
-          embeds.push(embed2);
-        }
-        if (moveData['Image3'] != null) {
-          const embed3 = new MessageEmbed().setImage(moveData['Image3']);
-          embeds.push(embed3);
-        }
-        if (moveData['Image4'] != null) {
-          const embed4 = new MessageEmbed().setImage(moveData['Image4']);
-          embeds.push(embed4);
-        }
-        if (moveData['Image5'] != null) {
-          const embed5 = new MessageEmbed().setImage(moveData['Image5']);
-          embeds.push(embed5);
-        }
-        if (moveData['Image6'] != null) {
-          const embed6 = new MessageEmbed().setImage(moveData['Image6']);
-          embeds.push(embed6);
-        }
-        if (moveData['Image7'] != null) {
-          const embed7 = new MessageEmbed().setImage(moveData['Image7']);
-          embeds.push(embed7);
-        }
-        if (moveData['Image8'] != null) {
-          const embed8 = new MessageEmbed().setImage(moveData['Image8']);
-          embeds.push(embed8);
-        }
-        if (moveData['Image9'] != null) {
-          const embed9 = new MessageEmbed().setImage(moveData['Image9']);
-          embeds.push(embed9);
-        } //10 embeds max per message
-        return interaction.reply({embeds: embeds});
-      } catch (error) {
-        console.log("Error parsing JSON string:", error);
-        return interaction.reply('There was an error while processing your request, reach out to <@259615904772521984>. Refer to the [Google sheet](https://docs.google.com/spreadsheets/d/1lzpQMoGAboJezLT9WRd3O-vlNDNRlgF_47ShtBGZ3G4) to look for the data.');
+          .setFooter({ text: 'Got feedback? Join the bot server: https://discord.gg/fPyTMgpR4X', iconURL: 'https://cdn.iconscout.com/icon/free/png-128/discord-3-569463.png' });
+          (moveData.GIF !== null) ? embed.setImage(moveData.GIF) : embed.addField('No GIF was found for this move', 'Feel free to share a Giphy hosted GIF with the [developers](https://github.com/dens0ne/kofxv_framebot/issues) if you have one.', true);
+        (moveData.NAME !== null) ? embed.setDescription(moveData.NAME) : '';
+        return interaction.reply({embeds: [embed]});
+      } catch (err) {
+        console.log("Error parsing JSON string:", err);
+        return interaction.reply('There was an error while processing your request, if the problem persists, contact the bot developers. Refer to the [Google sheet](https://docs.google.com/spreadsheets/d/1uPQlyMB8pJhCILH0BYZNhJAO2cNq0aEZt_ifYQ6-uiI) to look for the data.');
       }
     });
   },
-  getCharacter: function(character) {
-    const chart = {
-      'Andy': 'Andy Bogard',
-      'Athena': 'Athena Asamiya',
-      'Benimaru': 'Benimaru Nikaido',
-      'Billy': 'Billy Kane',
-      'Mary': 'Blue Mary',
-      'Ex Kensou': 'EX Kensou',
-      'Ex Robert': 'EX Robert',
-      'Ex Takuma': 'EX Takuma',
-      'O.Chris': 'Orochi Chris',
-      'O.Shermie': 'Orochi Shermie',
-      'O.Yashiro': 'Orochi Yashiro',
-      'Chang': 'Chang Koehan',
-      'Chin': 'Chin Gentsai',
-      'Choi': 'Choi Bounge',
-      'Clark': 'Clark Still',
-      'Foxy': 'Foxy',
-      'Daimon': 'Goro Daimon',
-      'Hinako': 'Hinako Shijou',
-      'Iori': 'Iori Yagami',
-      'Jhun': 'Jhun Hoon',
-      'Joe': 'Joe Higashi',
-      'K`': 'K',
-      'K Dash': 'K',
-      'Kasumi': 'Kasumi Todoh',
-      'Kim': 'Kim Kaphwan',
-      'Kula': 'Kula Diamond',
-      'Kyo': 'Kyo Kusanagi',
-      'Leona': 'Leona Heidern',
-      'Xiangfei': 'Li Xiangfei',
-      'Mai': 'Mai Shiranui',
-      'May Lee': 'May Lee(Normal)',
-      'Ralf': 'Ralf Jones',
-      'Robert': 'Robert Garcia',
-      'Ryo': 'Ryo Sakazaki',
-      'Yamazaki': 'Ryuji Yamazaki',
-      'Shingo': 'Shingo Yabuki',
-      'Kensou': 'Sie Kensou',
-      'Takuma': 'Takuma Sakazaki',
-      'Terry': 'Terry Bogard',
-      'Yashiro': 'Yashiro Nanakase',
-      'Yuri': 'Yuri Sakazaki'
+  getCharacterNumber: function(character) {
+    const charOrder = {
+      'Shunei': '01',
+      'Meitenkun': '02',
+      'Benimaru': '03',
+      'Iori': '04',
+      'Joe': '05',
+      'Kyo': '06',
+      'Chizuru': '07',
+      'Andy': '08',
+      'Yuri': '09',
+      'Terry': '10',
+      'Yashiro': '11',
+      'King': '12',
+      'Mai': '13',
+      'Shermie': '14',
+      'Chris': '15',
+      'Ryo': '16',
+      'Robert': '17',
+      'Leona': '18',
+      'Ralf': '19',
+      'Clark': '20',
+      'Blue Mary': '21',
+      'Luong': '22',
+      'Vanessa': '23',
+      'Ramon': '24',
+      'KODino': '25',
+      'Athena': '26',
+      'Antonov': '27',
+      'Ash': '28',
+      'Kukri': '29',
+      'Isla': '30',
+      'K': '31',
+      'Heidern': '32',
+      'Dolores': '33',
+      'Whip': '34',
+      'Angel': '35',
+      'Krohnen': '36',
+      'Maxima': '37',
+      'Kula': '38',
+      'Elisabeth': '39',
+      'Rock': '40',
+      'B Jenet': '41',
+      'Gato': '42',
+      'Rugal': '43'
     };
-    if (chart[character] === undefined) {
-      return character;
-    }
-    return chart[character];
-  },
-  getCharacterImg: function(character) {
-    const chartImg = {
-      'EX Kensou': 'kensouex',
-      'EX Robert': 'robertex',
-      'EX Takuma': 'takumaex',
-      'Blue Mary': 'bluemary',
-      'Ryuji Yamazaki': 'yamazaki',
-      'Goro Daimon': 'daimon',
-      'Sie Kensou': 'kensou',
-      'May Lee(Normal)': 'maylee',
-      'May Lee(Hero)': 'maylee',
-      'Li Xiangfei': 'xiangfei',
-      'Orochi Chris': 'orochichris',
-      'Orochi Shermie': 'orochishermie',
-      'Orochi Yashiro': 'orochiyashiro',
-    };
-    if (chartImg[character] === undefined) {
-      return character.toLowerCase().replace('-','').split(' ')[0];
-    }
-    return chartImg[character];
+    return charOrder[character];
   }
-}
+};
