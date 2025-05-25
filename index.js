@@ -49,19 +49,19 @@ client.on('interactionCreate', async autocomplete => {
     let currentValue = currentOption.value;
     characters = json_characters;
 
+    if (autocomplete.commandName === 'cargo') {
+	    let cargo_characters = []
+	    const url_char = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C&&group+by=MoveData_COTW.chara&order+by=&limit=100&format=json"
+	    const response_char = await fetch(url_char);
+	    const cargo_char = await response_char.json();
+	    for (let x in cargo_char) {
+		    if (cargo_char[x]["chara"]!==null) cargo_characters.push(cargo_char[x]["chara"])
+	    }
+	    characters = cargo_characters;
+    }
+
     const options = [];
     if (currentName === "character") {
-	    if (autocomplete.commandName === 'cargo') {
-		    let cargo_characters = []
-		    const url_char = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C&&group+by=MoveData_COTW.chara&order+by=&limit=100&format=json"
-		    const response_char = await fetch(url_char);
-		    const cargo_char = await response_char.json();
-		    for (let x in cargo_char) {
-			    if (cargo_char[x]["chara"]!==null) cargo_characters.push(cargo_char[x]["chara"])
-		    }
-		    characters = cargo_characters;
-	    }
-
       characters.forEach((character) => {
         if (character.toLowerCase().includes(currentValue.toLowerCase())) {
           let charObj = {}
