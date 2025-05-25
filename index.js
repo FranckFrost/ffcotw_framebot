@@ -183,10 +183,8 @@ const token = process.env['DISCORD_TOKEN']
 client.login(token);
 
 function getCharacter(character) {
+    if (character.includes('Jenet')) return 'B. Jenet';
     const chart = {
-      'B Jenet': 'B. Jenet',
-      'BJenet': 'B. Jenet',
-      'B.Jenet': 'B. Jenet',
       'Billy': 'Billy Kane',
       'Cristiano': 'Cristiano Ronaldo',
       'Ronaldo': 'Cristiano Ronaldo',
