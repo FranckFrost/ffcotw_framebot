@@ -36,11 +36,12 @@ client.on('interactionCreate', async autocomplete => {
 	if (!autocomplete.isAutocomplete()) return;
   // console.log(autocomplete.commandName)
 	if (autocomplete.commandName === 'frames') {
-		let options = [];
+		let options = []
 		let Obj = {}
 		Obj["name"] = 'This command isn\'t available yet. Please use /cargo.';
 		Obj["value"] = 'This command isn\'t available yet. Please use /cargo.';
-	    options.push(Obj);
+		options.push(Obj);
+		await autocomplete.respond(options);
 	}
 	if (autocomplete.commandName === 'embed' || autocomplete.commandName === 'cargo') {
     let currentOption = autocomplete.options.getFocused(true);
