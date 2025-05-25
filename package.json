@@ -1,13 +1,13 @@
 {
-  "name": "kof02um-framebot",
+  "name": "ffcotw-framebot",
   "version": "1.0.0",
-  "description": "Discord frame bot for KOF 02UM",
+  "description": "Discord frame bot for FF COTW",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "nup": "npm i --save-dev node@16 && npm config set prefix=$(pwd)/node_modules/node && export PATH=$(pwd)/node_modules/node/bin:$PATH"
   },
-  "author": "franckfrost",
+  "author": "lantors & franckfrost",
   "license": "ISC",
   "dependencies": {
     "@discordjs/builders": "^0.12.0",
@@ -22,11 +22,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FranckFrost/kof02um_framebot.git"
+    "url": "git+https://github.com/FranckFrost/ffcotw_framebot.git"
   },
   "keywords": [],
   "bugs": {
-    "url": "https://github.com/FranckFrost/kof02um_framebot/issues"
+    "url": "https://github.com/FranckFrost/ffcotw_framebot/issues"
   },
-  "homepage": "https://github.com/FranckFrost/kof02um_framebot#readme"
+  "homepage": "https://github.com/FranckFrost/ffcotw_framebot#readme"
 }
