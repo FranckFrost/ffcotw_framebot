@@ -24,18 +24,24 @@ for (const file of guildCommandFiles) {
 
 let json = null
 let characters = [], json_characters = [];
-client.once('ready', () => {
-  json = fs.readFileSync("./assets/framedata02um.json", 'utf8');
+/*client.once('ready', () => {
+  json = fs.readFileSync("./assets/framedatacotw.json", 'utf8');
   json = JSON.parse(json);
   Object.keys(json).forEach(function (key) {
     json_characters.push(key);
   })
   console.log('Ready!');
-});
+});*/
 client.on('interactionCreate', async autocomplete => {
 	if (!autocomplete.isAutocomplete()) return;
   // console.log(autocomplete.commandName)
-	if (autocomplete.commandName === 'embed' || autocomplete.commandName === 'frames' || autocomplete.commandName === 'cargo') {
+	if (autocomplete.commandName === 'frames') {
+		let Obj = {}
+		Obj["name"] = 'This command isn\'t available yet. Please use /cargo.';
+		Obj["value"] = 'This command isn\'t available yet. Please use /cargo.';
+	    options.push(Obj);
+	}
+	if (autocomplete.commandName === 'embed' || autocomplete.commandName === 'cargo') {
     let currentOption = autocomplete.options.getFocused(true);
     let currentName = currentOption.name;
     let currentValue = currentOption.value;
@@ -45,7 +51,7 @@ client.on('interactionCreate', async autocomplete => {
     if (currentName === "character") {
 	    if (autocomplete.commandName === 'cargo') {
 		    let cargo_characters = []
-		    const url_char = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_KOF02UM%2C&&fields=MoveData_KOF02UM.chara%2C&&group+by=MoveData_KOF02UM.chara&order+by=&limit=100&format=json"
+		    const url_char = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C&&group+by=MoveData_COTW.chara&order+by=&limit=100&format=json"
 		    const response_char = await fetch(url_char);
 		    const cargo_char = await response_char.json();
 		    for (let x in cargo_char) {
@@ -74,9 +80,12 @@ client.on('interactionCreate', async autocomplete => {
 	    moveObj["value"] = 'You have to enter the character first. Delete and reset the command to try again.';
 	    options.push(moveObj);
       } else {
-	    // Capitilize first letter(s) of char name.
-	    let a = (character.split(' ')[1]!==undefined) ? ' ' + character.split(' ')[1].charAt(0).toUpperCase() + character.split(' ')[1].slice(1) : ""
-	    let char = character.split(' ')[0].charAt(0).toUpperCase() + character.split(' ')[0].slice(1) + a;
+	    // Capitilize first letters of each word of the char name.
+	    let words = character.split(' ')
+	    for (let i in words) {
+		    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1)
+	    }
+	    let char = words.join(' ');
 	    // Validate extra names.
 	    character = getCharacter(char)
 	    if (autocomplete.commandName === 'cargo') {
@@ -87,7 +96,7 @@ client.on('interactionCreate', async autocomplete => {
 		    } else {
 			    let move = "";
 			    let val = "";
-			    const url_moves = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_KOF02UM%2C&&fields=MoveData_KOF02UM.input%2C+MoveData_KOF02UM.input2%2C+MoveData_KOF02UM.name%2C+MoveData_KOF02UM.version%2C+MoveData_KOF02UM.moveId%2C&where=chara+%3D+%22"+encodeURIComponent(character)+"%22&order+by=MoveData_KOF02UM._ID+ASC&limit=100&format=json"
+			    const url_moves = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.input%2C+MoveData_COTW.input2%2C+MoveData_COTW.name%2C+MoveData_COTW.version%2C+MoveData_COTW.moveId%2C&where=chara+%3D+%22"+encodeURIComponent(character)+"%22&order+by=MoveData_COTW._ID+ASC&limit=100&format=json"
 			    const response_moves = await fetch(url_moves);
 			    const cargo_moves = await response_moves.json();
 			    for (let x in cargo_moves) {
@@ -157,7 +166,7 @@ client.on("ready", () => {
   client.user.setPresence({
     status: "online",
     activities: [{
-      name: 'Kyo. Use /frames, /cargo or /help to get started.'
+      name: 'Terry. Use /frames, /cargo or /help to get started.'
     }],
   }); 
 });
@@ -175,47 +184,24 @@ client.login(token);
 
 function getCharacter(character) {
     const chart = {
-      'Andy': 'Andy Bogard',
-      'Athena': 'Athena Asamiya',
-      'Benimaru': 'Benimaru Nikaido',
+      'B Jenet': 'B. Jenet',
+      'BJenet': 'B. Jenet',
+      'B.Jenet': 'B. Jenet',
       'Billy': 'Billy Kane',
-      'Mary': 'Blue Mary',
-      'Ex Kensou': 'EX Kensou',
-      'Ex Robert': 'EX Robert',
-      'Ex Takuma': 'EX Takuma',
-      'O.Chris': 'Orochi Chris',
-      'O.Shermie': 'Orochi Shermie',
-      'O.Yashiro': 'Orochi Yashiro',
-      'Chang': 'Chang Koehan',
-      'Chin': 'Chin Gentsai',
-      'Choi': 'Choi Bounge',
-      'Clark': 'Clark Still',
-      'Foxy': 'Foxy',
-      'Daimon': 'Goro Daimon',
-      'Hinako': 'Hinako Shijou',
-      'Iori': 'Iori Yagami',
-      'Jhun': 'Jhun Hoon',
-      'Joe': 'Joe Higashi',
-      'K`': 'K',
-      'K Dash': 'K',
-      'Kasumi': 'Kasumi Todoh',
-      'Kim': 'Kim Kaphwan',
-      'Kula': 'Kula Diamond',
-      'Kyo': 'Kyo Kusanagi',
-      'Leona': 'Leona Heidern',
-      'Xiangfei': 'Li Xiangfei',
+      'Cristiano': 'Cristiano Ronaldo',
+      'Ronaldo': 'Cristiano Ronaldo',
+      'Hotaru': 'Hotaru Futaba',
+      'Kain': 'Kain R. Heinlein',
+      'Kevin': 'Kevin Rian',
+      'Hwan': 'Kim Dong Hwan',
       'Mai': 'Mai Shiranui',
-      'May Lee': 'May Lee(Normal)',
-      'Ralf': 'Ralf Jones',
-      'Robert': 'Robert Garcia',
-      'Ryo': 'Ryo Sakazaki',
-      'Yamazaki': 'Ryuji Yamazaki',
-      'Shingo': 'Shingo Yabuki',
-      'Kensou': 'Sie Kensou',
-      'Takuma': 'Takuma Sakazaki',
+      'Marco': 'Marco Rodrigues',
+      'Rock': 'Rock Howard',
+      'Salvatore': 'Salvatore Ganacci',
+      'Ganacci': 'Salvatore Ganacci',
       'Terry': 'Terry Bogard',
-      'Yashiro': 'Yashiro Nanakase',
-      'Yuri': 'Yuri Sakazaki'
+      'Vox': 'Vox Reaper',
+      'Reaper': 'Vox Reaper'
     };
     if (chart[character] === undefined) {
       return character;
