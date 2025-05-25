@@ -1,0 +1,32 @@
+{
+  "name": "kof02um-framebot",
+  "version": "1.0.0",
+  "description": "Discord frame bot for KOF 02UM",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "nup": "npm i --save-dev node@16 && npm config set prefix=$(pwd)/node_modules/node && export PATH=$(pwd)/node_modules/node/bin:$PATH"
+  },
+  "author": "franckfrost",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/rest": "^0.3.0",
+    "discord-api-types": "^0.27.3",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3"
+  },
+  "devDependencies": {
+    "node": "^16.14.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FranckFrost/kof02um_framebot.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/FranckFrost/kof02um_framebot/issues"
+  },
+  "homepage": "https://github.com/FranckFrost/kof02um_framebot#readme"
+}
