@@ -17,6 +17,7 @@ module.exports = {
   			.setDescription('The move input (e.g. 2C, 236A, close B)')
   			.setRequired(true)),
   async execute(interaction) {
+    return interaction.reply('This command isn\'t available yet. Please use /cargo.');
     const char = interaction.options.getString('character');
     const move = interaction.options.getString('move');
     // Load frame data json.
