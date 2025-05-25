@@ -24,14 +24,14 @@ for (const file of guildCommandFiles) {
 
 let json = null
 let characters = [], json_characters = [];
-client.once('ready', () => {
+/*client.once('ready', () => {
   json = fs.readFileSync("./assets/framedatacotw.json", 'utf8');
   json = JSON.parse(json);
   Object.keys(json).forEach(function (key) {
     json_characters.push(key);
   })
   console.log('Ready!');
-});
+});*/
 client.on('interactionCreate', async autocomplete => {
 	if (!autocomplete.isAutocomplete()) return;
   // console.log(autocomplete.commandName)
