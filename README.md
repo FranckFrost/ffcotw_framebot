@@ -1,5 +1,5 @@
 ## Introduction
-This is a KOF 02UM bot in a very early stage of development made by [@Franck_Frost](https://twitter.com/FranckFrost), and based on the XV bot by [@Lantors](https://github.com/dens0ne) to which a lot of credit goes to. The  information is pulled from the current latest [Framedata sheet](https://docs.google.com/spreadsheets/d/1lzpQMoGAboJezLT9WRd3O-vlNDNRlgF_47ShtBGZ3G4) for /frames and directly from the [Dream Cancel wiki](https://dreamcancel.com/wiki/The_King_of_Fighters_2002_UM) for /cargo.
+This is a FF COTW bot in early stage of development made by [@Lantors](https://github.com/dens0ne) and [@Franck_Frost](https://twitter.com/FranckFrost). The  information is pulled from the current latest [Framedata sheet](LINK HERE) for /frames and directly from the [Dream Cancel wiki](https://dreamcancel.com/wiki/Fatal_Fury:_City_of_the_Wolves) for /cargo.
 
 ## Getting started
 To start using this bot in your server, add it with the following [link](https://discord.com/api/oauth2/authorize?client_id=950847013870772264&permissions=277025721344&scope=bot%20applications.commands). You can also view the bot in community bot listing platforms:
@@ -8,17 +8,17 @@ To start using this bot in your server, add it with the following [link](https:/
 
 ## Usage
 The bot has a `/frames` and a `/cargo` slash command that both accept 2 arguments:
-- the `character` which is a case insensitive string (e.g. Kyo, Iori)
+- the `character` which is a case insensitive string (e.g. Rock, Terry)
 - the `move` which is a case insensitive string of the motion or name (e.g. Crouch C, Close A)
 
 ## Notes
-Hitbox images will be added slowly, starting with normal moves.
+Hitbox images and other commands may be added in the future.
 
 ## Demo
 [![gif](https://media.giphy.com/media/LrqUuAZB2E3hGvHtOH/giphy.gif)](https://giphy.com/gifs/LrqUuAZB2E3hGvHtOH)
 
 ## Feedback
-Visit the official [02UM Discord Server](https://discord.gg/8JNXHxf) to discuss with [@Franck_Frost](https://twitter.com/FranckFrost), maker of both the data sheet and bot.
+Visit the official [COTW Discord Server](https://discord.gg/ChEEUuZwqS) to join the community actively providing data for the bot.
 
 ## Bot status
 
