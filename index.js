@@ -31,7 +31,7 @@ client.once('ready', async () => {
     json_characters.push(key);
   })
 
-  const url = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C+MoveData_COTW.moveId%2C+MoveData_COTW.name%2C+MoveData_COTW.input%2C+MoveData_COTW.input2%2C+MoveData_COTW.version%2C&&order+by=MoveData_COTW._ID+ASC&limit=4000&format=json"
+  const url = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C+MoveData_COTW.moveId%2C+MoveData_COTW.name%2C+MoveData_COTW.input%2C+MoveData_COTW.input2%2C+MoveData_COTW.version%2C&&order+by=MoveData_COTW.chara+ASC&limit=4000&format=json"
   let response = await fetch(url);
   cargo = await response.json();
   for (let x in cargo) {
