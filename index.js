@@ -22,7 +22,7 @@ for (const file of guildCommandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-let json = null
+let json = null, cargo = null;
 let characters = [], json_characters = [], cargo_characters = [];
 client.once('ready', async () => {
   json = fs.readFileSync("./assets/framedatacotw.json", 'utf8');
@@ -31,11 +31,11 @@ client.once('ready', async () => {
     json_characters.push(key);
   })
 
-  const url_char = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C&&group+by=MoveData_COTW.chara&order+by=&limit=100&format=json"
-  const response_char = await fetch(url_char);
-  const cargo_char = await response_char.json();
-  for (let x in cargo_char) {
-	  if (cargo_char[x]["chara"]!==null) cargo_characters.push(cargo_char[x]["chara"])
+  const url = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C+MoveData_COTW.moveId%2C+MoveData_COTW.name%2C+MoveData_COTW.input%2C+MoveData_COTW.input2%2C+MoveData_COTW.version%2C&&order+by=MoveData_COTW._ID+ASC&limit=4000&format=json"
+  let response = await fetch(url);
+  cargo = await response.json();
+  for (let x in cargo) {
+	  if (cargo[x]["chara"]!==null && (!cargo_characters.includes(cargo[x]["chara"]))) cargo_characters.push(cargo[x]["chara"])
   }
 	
   console.log('Ready!');
@@ -86,17 +86,15 @@ client.on('interactionCreate', async autocomplete => {
                             options.push(moveObj);
 		    } else {
 			    let move = "";
-			    let val = "";
-			    const url_moves = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.input%2C+MoveData_COTW.input2%2C+MoveData_COTW.name%2C+MoveData_COTW.version%2C+MoveData_COTW.moveId%2C&where=chara+%3D+%22"+encodeURIComponent(character)+"%22&order+by=MoveData_COTW._ID+ASC&limit=100&format=json"
-			    const response_moves = await fetch(url_moves);
-			    const cargo_moves = await response_moves.json();
-			    for (let x in cargo_moves) {
-				    move = cargo_moves[x]["name"]
-				    if (cargo_moves[x]["input"] !== null) {
-					    move = cargo_moves[x]["name"] + " (" + cargo_moves[x]["input"] + ")"
-					    if (cargo_moves[x]["input2"] !== null && cargo_moves[x]["input"] !== cargo_moves[x]["input2"]) {
-						    let ver = (cargo_moves[x]["version"] === 'Raw' || cargo_moves[x]["version"] === "Canceled into") ? cargo_moves[x]["version"]+" " : "";
-						    move = cargo_moves[x]["name"] + " (" + ver + "[" + cargo_moves[x]["input"] + "] / [" + cargo_moves[x]["input2"] + "])"
+			    for (let x in cargo) {
+				    if (cargo[x]["chara"] === character) {
+					    move = cargo[x]["name"]
+					    if (cargo[x]["input"] !== null) {
+						    move = cargo[x]["name"] + " (" + cargo[x]["input"] + ")"
+						    if (cargo[x]["input2"] !== null && cargo[x]["input"] !== cargo[x]["input2"]) {
+							    let ver = (cargo[x]["version"] === 'Raw' || cargo[x]["version"] === "Canceled into") ? cargo[x]["version"]+" " : "";
+							    move = cargo_moves[x]["name"] + " (" + ver + "[" + cargo[x]["input"] + "] / [" + cargo[x]["input2"] + "])"
+						    }
 					    }
 				    }
 				    if (move.toLowerCase().includes(currentValue.toLowerCase())) {
@@ -141,11 +139,11 @@ client.on('interactionCreate', async interaction => {
   await command.execute(interaction);
 
   if (interaction.commandName === 'cargo') {
-	  const url_char = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C&&group+by=MoveData_COTW.chara&order+by=&limit=100&format=json"
-	  const response_char = await fetch(url_char);
-	  const cargo_char = await response_char.json();
-	  for (let x in cargo_char) {
-		  if (cargo_char[x]["chara"]!==null) cargo_characters.push(cargo_char[x]["chara"])
+	  cargo_characters = []
+	  response = await fetch(url);
+	  cargo = await response.json();
+	  for (let x in cargo) {
+		  if (cargo[x]["chara"]!==null && (!cargo_characters.includes(cargo[x]["chara"]))) cargo_characters.push(cargo[x]["chara"])
 	  }
   }
 });
