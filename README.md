@@ -3,7 +3,7 @@ This is a FF COTW bot in early stage of development made by [@Lantors](https://g
 
 ## Getting started
 To start using this bot in your server, add it with the following [link](https://discord.com/api/oauth2/authorize?client_id=1376145362594824272&permissions=277025721344&scope=bot%20applications.commands). You can also view the bot in community bot listing platforms:
- - [Top](https://top.gg/bot/950847013870772264)
+ - [Top](https://top.gg/bot/1376145362594824272)
  - [Discord bots](https://discord.bots.gg/bots/950847013870772264)
 
 ## Usage
@@ -15,11 +15,11 @@ The bot has a `/frames` and a `/cargo` slash command that both accept 2 argument
 Hitbox images and other commands may be added in the future.
 
 ## Demo
-[![gif](https://media.giphy.com/media/LrqUuAZB2E3hGvHtOH/giphy.gif)](https://giphy.com/gifs/LrqUuAZB2E3hGvHtOH)
+[![gif](https://media.giphy.com/media/lACkzpKQfmzDJ3tQx6/giphy.gif)](https://giphy.com/gifs/lACkzpKQfmzDJ3tQx6)
 
 ## Feedback
 Visit the official [COTW Discord Server](https://discord.gg/ChEEUuZwqS) to join the community actively providing data for the bot.
 
 ## Bot status
 
-[![Discord Bots](https://top.gg/api/widget/950847013870772264.svg)](https://top.gg/bot/950847013870772264)
+[![Discord Bots](https://top.gg/api/widget/1376145362594824272.svg)](https://top.gg/bot/1376145362594824272)
