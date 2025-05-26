@@ -23,15 +23,23 @@ for (const file of guildCommandFiles) {
 }
 
 let json = null
-let characters = [], json_characters = [];
-/*client.once('ready', () => {
+let characters = [], json_characters = [], cargo_characters = [];
+client.once('ready', () => {
   json = fs.readFileSync("./assets/framedatacotw.json", 'utf8');
   json = JSON.parse(json);
   Object.keys(json).forEach(function (key) {
     json_characters.push(key);
   })
+
+  const url_char = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C&&group+by=MoveData_COTW.chara&order+by=&limit=100&format=json"
+  const response_char = await fetch(url_char);
+  const cargo_char = await response_char.json();
+  for (let x in cargo_char) {
+	  if (cargo_char[x]["chara"]!==null) cargo_characters.push(cargo_char[x]["chara"])
+  }
+	
   console.log('Ready!');
-});*/
+});
 client.on('interactionCreate', async autocomplete => {
 	if (!autocomplete.isAutocomplete()) return;
   // console.log(autocomplete.commandName)
@@ -47,18 +55,7 @@ client.on('interactionCreate', async autocomplete => {
     let currentOption = autocomplete.options.getFocused(true);
     let currentName = currentOption.name;
     let currentValue = currentOption.value;
-    characters = json_characters;
-
-    if (autocomplete.commandName === 'cargo') {
-	    let cargo_characters = []
-	    const url_char = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C&&group+by=MoveData_COTW.chara&order+by=&limit=100&format=json"
-	    const response_char = await fetch(url_char);
-	    const cargo_char = await response_char.json();
-	    for (let x in cargo_char) {
-		    if (cargo_char[x]["chara"]!==null) cargo_characters.push(cargo_char[x]["chara"])
-	    }
-	    characters = cargo_characters;
-    }
+    characters = (autocomplete.commandName === 'cargo') ? cargo_characters : json_characters;
 
     const options = [];
     if (currentName === "character") {
@@ -75,25 +72,17 @@ client.on('interactionCreate', async autocomplete => {
     }
     // If move is focused 
     if (currentName === "move") {
-      let character = autocomplete.options.getString('character')
+      let character = getCharacter(autocomplete.options.getString('character'))
       let moveObj = {}
       if (character === null) {
 	    moveObj["name"] = 'You have to enter the character first. Delete and reset the command to try again.';
 	    moveObj["value"] = 'You have to enter the character first. Delete and reset the command to try again.';
 	    options.push(moveObj);
       } else {
-	    // Capitilize first letters of each word of the char name.
-	    let words = character.split(' ')
-	    for (let i in words) {
-		    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1)
-	    }
-	    let char = words.join(' ');
-	    // Validate extra names.
-	    character = getCharacter(char)
 	    if (autocomplete.commandName === 'cargo') {
 		    if (!characters.includes(character)) {
-			    moveObj["name"] = 'No cargo data available for ' + character + ' yet. Gather its framedata with /frames instead.';
-                            moveObj["value"] = 'No cargo data available for ' + character + ' yet. Gather its framedata with /frames instead.';
+			    moveObj["name"] = 'No cargo data available for ' + character + ' yet. Gather framedata with /frames instead.';
+                            moveObj["value"] = 'No cargo data available for ' + character + ' yet. Gather framedata with /frames instead.';
                             options.push(moveObj);
 		    } else {
 			    let move = "";
@@ -108,14 +97,6 @@ client.on('interactionCreate', async autocomplete => {
 					    if (cargo_moves[x]["input2"] !== null && cargo_moves[x]["input"] !== cargo_moves[x]["input2"]) {
 						    let ver = (cargo_moves[x]["version"] === 'Raw' || cargo_moves[x]["version"] === "Canceled into") ? cargo_moves[x]["version"]+" " : "";
 						    move = cargo_moves[x]["name"] + " (" + ver + "[" + cargo_moves[x]["input"] + "] / [" + cargo_moves[x]["input2"] + "])"
-						    /*val = he.decode(cargo_moves[x]["moveId"] + "?" + move)
-						    if (val.length > 100) {   // choice character limit of 100
-							    move = cargo_moves[x]["name"].replaceAll('?','') + " ([" + cargo_moves[x]["input"].replaceAll(' ','') + "] / [" + cargo_moves[x]["input2"].replaceAll(' ','') + "])";
-							    val = he.decode(cargo_moves[x]["moveId"] + "?" + move)
-							    if (val.length > 100) {   // choice character limit of 100
-								    move = move.replaceAll('A/C','P').replaceAll('B/D','K');
-							    }
-						    }*/
 					    }
 				    }
 				    if (move.toLowerCase().includes(currentValue.toLowerCase())) {
@@ -158,6 +139,15 @@ client.on('interactionCreate', async interaction => {
 	
   if (!command) return;
   await command.execute(interaction);
+
+  if (interaction.commandName === 'cargo') {
+	  const url_char = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C&&group+by=MoveData_COTW.chara&order+by=&limit=100&format=json"
+	  const response_char = await fetch(url_char);
+	  const cargo_char = await response_char.json();
+	  for (let x in cargo_char) {
+		  if (cargo_char[x]["chara"]!==null) cargo_characters.push(cargo_char[x]["chara"])
+	  }
+  }
 });
 client.on("ready", () => {
   console.log(`Hi, ${client.user.username} is now online and used in ${client.guilds.cache.size} servers.`);
@@ -185,7 +175,15 @@ const token = process.env['DISCORD_TOKEN']
 client.login(token);
 
 function getCharacter(character) {
-    if (character.includes('Jenet')) return 'B. Jenet';
+    // Capitilize first letters of each word of the char name.
+    let words = character.split(' ')
+    for (let i in words) {
+	    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1)
+    }
+    let char = words.join(' ');
+	
+    // Validate extra names.
+    if (char.includes('Jenet')) return 'B. Jenet';
     const chart = {
       'Billy': 'Billy Kane',
       'Cristiano': 'Cristiano Ronaldo',
@@ -203,8 +201,8 @@ function getCharacter(character) {
       'Vox': 'Vox Reaper',
       'Reaper': 'Vox Reaper'
     };
-    if (chart[character] === undefined) {
-      return character;
+    if (chart[char] === undefined) {
+      return char;
     }
-    return chart[character];
+    return chart[char];
 };
