@@ -24,6 +24,7 @@ for (const file of guildCommandFiles) {
 
 let json = null, cargo = null;
 let characters = [], json_characters = [], cargo_characters = [];
+const url = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C+MoveData_COTW.moveId%2C+MoveData_COTW.name%2C+MoveData_COTW.input%2C+MoveData_COTW.input2%2C+MoveData_COTW.version%2C&&order+by=MoveData_COTW.chara+ASC&limit=4000&format=json"
 client.once('ready', async () => {
   json = fs.readFileSync("./assets/framedatacotw.json", 'utf8');
   json = JSON.parse(json);
@@ -31,8 +32,7 @@ client.once('ready', async () => {
     json_characters.push(key);
   })
 
-  const url = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.chara%2C+MoveData_COTW.moveId%2C+MoveData_COTW.name%2C+MoveData_COTW.input%2C+MoveData_COTW.input2%2C+MoveData_COTW.version%2C&&order+by=MoveData_COTW.chara+ASC&limit=4000&format=json"
-  let response = await fetch(url);
+  const response = await fetch(url);
   cargo = await response.json();
   for (let x in cargo) {
 	  if (cargo[x]["chara"]!==null && (!cargo_characters.includes(cargo[x]["chara"]))) cargo_characters.push(cargo[x]["chara"])
@@ -85,26 +85,26 @@ client.on('interactionCreate', async autocomplete => {
                             moveObj["value"] = 'No cargo data available for ' + character + ' yet. Gather framedata with /frames instead.';
                             options.push(moveObj);
 		    } else {
-			    let move = "";
-			    for (let x in cargo) {
-				    if (cargo[x]["chara"] === character) {
-					    move = cargo[x]["name"]
-					    if (cargo[x]["input"] !== null) {
-						    move = cargo[x]["name"] + " (" + cargo[x]["input"] + ")"
-						    if (cargo[x]["input2"] !== null && cargo[x]["input"] !== cargo[x]["input2"]) {
-							    let ver = (cargo[x]["version"] === 'Raw' || cargo[x]["version"] === "Canceled into") ? cargo[x]["version"]+" " : "";
-							    move = cargo_moves[x]["name"] + " (" + ver + "[" + cargo[x]["input"] + "] / [" + cargo[x]["input2"] + "])"
-						    }
+			    let move = "", x = 0;
+			    while (cargo[x]["chara"] !== character) x++;
+			    do {
+				    move = cargo[x]["name"]
+				    if (cargo[x]["input"] !== null) {
+					    move = cargo[x]["name"] + " (" + cargo[x]["input"] + ")"
+					    if (cargo[x]["input2"] !== null && cargo[x]["input"] !== cargo[x]["input2"]) {
+						    let ver = (cargo[x]["version"] === 'Raw' || cargo[x]["version"] === "Canceled into") ? cargo[x]["version"]+" " : "";
+						    move = cargo[x]["name"] + " (" + ver + "[" + cargo[x]["input"] + "] / [" + cargo[x]["input2"] + "])"
 					    }
-				    }
+				    }			    
 				    if (move.toLowerCase().includes(currentValue.toLowerCase())) {
 					    moveObj = {}
 					    moveObj["name"] = he.decode(move);
-					    moveObj["value"] = cargo_moves[x]["moveId"];
+					    moveObj["value"] = cargo[x]["moveId"];
 					    if (options.length < 25) options.push(moveObj);
 				    }
-			    }
-					  }
+				    x++;
+			    } while (cargo[x]["chara"] === character)
+		    }
 	    } else {
 		    if (json[character] === undefined) {
 			    moveObj["name"] = 'Moves not found for ' + character + ', try another character';
@@ -140,7 +140,7 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === 'cargo') {
 	  cargo_characters = []
-	  response = await fetch(url);
+	  const response = await fetch(url);
 	  cargo = await response.json();
 	  for (let x in cargo) {
 		  if (cargo[x]["chara"]!==null && (!cargo_characters.includes(cargo[x]["chara"]))) cargo_characters.push(cargo[x]["chara"])
