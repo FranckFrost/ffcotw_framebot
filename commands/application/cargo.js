@@ -71,7 +71,7 @@ module.exports = {
         .setColor('#0x1a2c78')
         .setTitle(character)
         .setURL(link)
-        .setAuthor({ name: move, iconURL: 'https://pbs.twimg.com/profile_images/1150082025673625600/m1VyNZtc_400x400.png', url: link + '/Data' })
+        .setAuthor({ name: move, iconURL: 'https://cdn.discordapp.com/icons/95696291010449408/fde1912170361c5ad27c33ef708f1c71.webp?size=100&quality=lossless', url: link + '/Data' })
         // .setDescription('Move input')
         .setThumbnail('https://tiermaker.com/images//media/template_images/2024/137019/fatal-fury-city-of-the-wolves-characters-including-dlc-137019/zzzzz-174' + img + '.png')
         .addFields(
