@@ -18,7 +18,7 @@ module.exports = {
             { name: '\u200B', value: '\u200B' },
             { name: 'Demo', value: 'The following is a visual representation of how the bot works:', inline: false },
           )
-          .setImage('https://media.giphy.com/media/LrqUuAZB2E3hGvHtOH/giphy.gif')
+          .setImage('https://media.giphy.com/media/lACkzpKQfmzDJ3tQx6/giphy.gif')
           .setFooter({ text: 'Got feedback? Join the COTW server: https://discord.gg/ChEEUuZwqS', iconURL: 'https://cdn.iconscout.com/icon/free/png-128/discord-3-569463.png' });
         return interaction.reply({embeds: [embed]});
   },
