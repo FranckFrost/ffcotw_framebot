@@ -25,14 +25,15 @@ module.exports = {
       const id = interaction.options.getString('move');
       
       // Fetch the cargo data with the appropriate moveId
-      const url_cargo = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.input%2C+MoveData_COTW.input2%2C+MoveData_COTW.name%2C+MoveData_COTW.version%2C+MoveData_COTW.hitboxes%2C+MoveData_COTW.images%2C+MoveData_COTW.damage%2C+MoveData_COTW.guard%2C+MoveData_COTW.startup%2C+MoveData_COTW.active%2C+MoveData_COTW.recovery%2C+MoveData_COTW.hitadv%2C+MoveData_COTW.blockadv%2C+MoveData_COTW.invul%2C+MoveData_COTW.cancel%2C+MoveData_COTW.idle%2C+MoveData_COTW.rank%2C+MoveData_COTW.revdamage%2C+MoveData_COTW.guardDamage%2C&where=moveId+%3D+%22"+encodeURIComponent(id)+"%22&order+by=&limit=100&format=json";
+      const url_cargo = "https://dreamcancel.com/w/index.php?title=Special:CargoExport&tables=MoveData_COTW%2C&&fields=MoveData_COTW.input%2C+MoveData_COTW.input2%2C+MoveData_COTW.name%2C+MoveData_COTW.version%2C+MoveData_COTW.hitboxes%2C+MoveData_COTW.images%2C+MoveData_COTW.damage%2C+MoveData_COTW.guard%2C+MoveData_COTW.startup%2C+MoveData_COTW.active%2C+MoveData_COTW.recovery%2C+MoveData_COTW.hitadv%2C+MoveData_COTW.blockadv%2C+MoveData_COTW.invul%2C+MoveData_COTW.cancel%2C+MoveData_COTW.idle%2C+MoveData_COTW.rank%2C+MoveData_COTW.revdamage%2C+MoveData_COTW.guardDamage%2C&where=chara+%3D+%22"+encodeURIComponent(character)+"%22+AND+moveId+%3D+%22"+encodeURIComponent(id)+"%22&order+by=&limit=100&format=json";
       const response_cargo = await fetch(url_cargo);
       const cargo = await response_cargo.json();
   
       // Preparing the embed data from cargo
       let moveData = cargo[0];
-      if (moveData == null) {
-        return interaction.editReply('You are free to manually enter the **character** but you have to select the **move** from the scroll list. You can type to refine the search.')
+       if (moveData == null) {
+	      if (!character.includes(id.split('_')[0])) return interaction.editReply('After validating your **character** choice you need to reset the command if you wish to change it.')
+	      return interaction.editReply('You are free to manually enter the **character** but you have to select the **move** from the scroll list. You can type to refine the search.')
       }
       let move = moveData["name"]
       if (moveData["input"] !== null) {
