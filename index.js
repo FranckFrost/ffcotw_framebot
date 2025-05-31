@@ -173,6 +173,7 @@ const token = process.env['DISCORD_TOKEN']
 client.login(token);
 
 function getCharacter(character) {
+    if (character === null) return null
     // Capitilize first letters of each word of the char name.
     let words = character.split(' ')
     for (let i in words) {
