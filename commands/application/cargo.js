@@ -32,7 +32,7 @@ module.exports = {
       // Preparing the embed data from cargo
       let moveData = cargo[0];
        if (moveData == null) {
-	      if (!character.includes(id.split('_')[0])) return interaction.editReply('After validating your **character** choice you need to reset the command if you wish to change it.')
+	      if (!character.includes(id.split('_')[0])) return interaction.editReply('After validating your **character** you need to delete and reset the command if you wish to change your choice.')
 	      return interaction.editReply('You are free to manually enter the **character** but you have to select the **move** from the scroll list. You can type to refine the search.')
       }
       let move = moveData["name"]
