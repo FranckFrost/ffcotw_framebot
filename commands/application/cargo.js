@@ -64,7 +64,7 @@ module.exports = {
       let hitboxes = (moveData['hitboxes'] !== null) ? moveData['hitboxes'].toString().trim().split(',') : images;
     
       // Get character link and img for header and thumbnail.
-      const link = 'https://dreamcancel.com/wiki/Fatal_Fury:_City_of_the_Wolves' + encodeURIComponent(character);
+      const link = 'https://dreamcancel.com/wiki/Fatal_Fury:_City_of_the_Wolves/' + encodeURIComponent(character);
       const img = this.getCharacterImg(character);
       
       const embeds = [];
