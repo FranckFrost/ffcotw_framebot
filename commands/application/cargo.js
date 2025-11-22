@@ -194,6 +194,8 @@ module.exports = {
     if (inv && str === null) return 'No recorded invincibility.'; // no invuln found
     if (str === null) return '-'; // no property found
     let s = str.toString().replaceAll('&#039;','');
+	let tooltip = '&lt;span class=&quot;tooltip&quot; &gt;'
+	if (s.match(tooltip)) return s.replace(tooltip,'').split('&lt;')[0] // remove tooltip
     if (s.match(/.*?\[\[.*?\]\].*/) === null) return s.replaceAll('_',' '); // no hyperlink found
     
     let t="", u="", v=[], w=[], x=[], y=[], z=(s.split(',')[1]!==undefined) ? s.split(',') : s.split(';')
