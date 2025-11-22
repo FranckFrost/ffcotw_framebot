@@ -191,7 +191,7 @@ module.exports = {
     return chart[char];
   },
   getHyperLink: function(str,inv) {
-    if (inv && str === null) return 'No recorded invincibility.'; // no invuln found
+    if (inv && (str === null || str === '-')) return 'No recorded invincibility.'; // no invuln found
     if (str === null) return '-'; // no property found
     let s = str.toString().replaceAll('&#039;','');
 	let tooltip = '&lt;span class=&quot;tooltip&quot; &gt;'
