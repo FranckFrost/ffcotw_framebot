@@ -74,7 +74,7 @@ module.exports = {
         .setURL(link)
         .setAuthor({ name: move, iconURL: 'https://cdn.discordapp.com/icons/95696291010449408/fde1912170361c5ad27c33ef708f1c71.webp?size=100&quality=lossless', url: link + '/Data' })
         // .setDescription('Move input')
-        .setThumbnail('https://tiermaker.com/images//media/template_images/2024/137019/fatal-fury-city-of-the-wolves-characters-including-dlc-137019/zzzzz-174' + img + '.png')
+        .setThumbnail('https://tiermaker.com/images//media/template_images/2024/137019/fatal-fury-city-of-the-wolves-characters-including-dlc-137019/zzzzz-' + img + '.png')
         .addFields(
           { name: 'Startup', value: startup, inline: true },
           { name: 'Active', value: active, inline: true },
@@ -177,7 +177,13 @@ module.exports = {
       'Ganacci': 'Salvatore Ganacci',
       'Terry': 'Terry Bogard',
       'Vox': 'Vox Reaper',
-      'Reaper': 'Vox Reaper'
+      'Reaper': 'Vox Reaper',
+      'Ken': 'Ken Masters',
+      'Chunli': 'Chun-Li',
+      'Chun-li': 'Chun-Li',
+      'Chun Li': 'Chun-Li',
+      'Joe': 'Joe Higashi',
+      'Andy': 'Andy Bogard'
     };
     if (chart[char] === undefined) {
       return char;
@@ -215,24 +221,34 @@ module.exports = {
   },
   getCharacterImg: function(character) {
     const chartImg = {
-      'Rock Howard': '352409400',
-      'Terry Bogard': '352409401',
-      'Hotaru Futaba': '352409402',
-      'Tizoc': '352409403',
-      'Preecha': '352409404',
-      'Marco Rodrigues': '352409405',
-      'B. Jenet': '352409406',
-      'Vox Reaper': '352409407',
-      'Kevin Rian': '352409408',
-      'Billy Kane': '352409409',
-      'Mai Shiranui': '352409510',
-      'Kim Dong Hwan': '352409511',
-      'Gato': '352409512',
-      'Kain R. Heinlein': '352409513',
-      'Cristiano Ronaldo': '352409514',
-      'Salvatore Ganacci': '370675915',
-      'Hokutomaru': '427039516',
+      'Rock Howard': '174352409400',
+      'Terry Bogard': '174352409401',
+      'Hotaru Futaba': '174352409402',
+      'Tizoc': '174352409403',
+      'Preecha': '174352409404',
+      'Marco Rodrigues': '174352409405',
+      'B. Jenet': '174352409406',
+      'Vox Reaper': '174352409407',
+      'Kevin Rian': '174352409408',
+      'Billy Kane': '174352409409',
+      'Mai Shiranui': '174352409510',
+      'Kim Dong Hwan': '174352409511',
+      'Gato': '174352409512',
+      'Kain R. Heinlein': '174352409513',
+      'Cristiano Ronaldo': '174352409514',
+      'Salvatore Ganacci': '174370675915',
+      'Hokutomaru': '174427039516',
+      'Andy Bogard': '175010032817',
+      'Chun-Li': '176197878920',
+      'Joe Higashi': '175855573519',
+      'Ken Masters': '175240207318',
     };
-    return chartImg[character] + '-' + character.toLowerCase().replace('.','').replace(' ','-').replace('ganacci','gannaci');
+	let dlc = ["Andy Bogard", "Chun-Li", "Joe Higashi", "Ken Masters"], sf = ["Chun-Li", "Ken Masters"];
+	if (dlc.includes(character)) {
+		if (sf.includes(character)) character = character + 'street-fighter'
+		character = character + '-dlc'
+	}
+		
+    return chartImg[character] + '-' + character.toLowerCase().replace('.','').replaceAll(' ','-').replace('ganacci','gannaci');
   }
 };
