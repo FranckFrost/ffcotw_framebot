@@ -87,7 +87,7 @@ client.on('interactionCreate', async autocomplete => {
 		    } else {
 			    let move = "", x = 0;
 			    while (cargo[x]["chara"] !== character) x++;
-			    do {
+			    while (cargo[x] && cargo[x]["chara"] === character) { // As long as the target is defined and finds the chara parameter
 				    move = cargo[x]["name"]
 				    if (cargo[x]["input"] !== null) {
 					    move = cargo[x]["name"] + " (" + cargo[x]["input"] + ")"
@@ -103,7 +103,7 @@ client.on('interactionCreate', async autocomplete => {
 					    if (options.length < 25) options.push(moveObj);
 				    }
 				    x++;
-			    } while (cargo[x]["chara"] === character)
+			    }
 		    }
 	    } else {
 		    if (json[character] === undefined) {
@@ -198,7 +198,13 @@ function getCharacter(character) {
       'Ganacci': 'Salvatore Ganacci',
       'Terry': 'Terry Bogard',
       'Vox': 'Vox Reaper',
-      'Reaper': 'Vox Reaper'
+      'Reaper': 'Vox Reaper',
+      'Ken': 'Ken Masters',
+      'Chunli': 'Chun-Li',
+      'Chun-li': 'Chun-Li',
+      'Chun Li': 'Chun-Li',
+      'Joe': 'Joe Higashi',
+      'Andy': 'Andy Bogard'
     };
     if (chart[char] === undefined) {
       return char;
