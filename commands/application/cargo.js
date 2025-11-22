@@ -243,12 +243,12 @@ module.exports = {
       'Joe Higashi': '175855573519',
       'Ken Masters': '175240207318',
     };
-	let dlc = ["Andy Bogard", "Chun-Li", "Joe Higashi", "Ken Masters"], sf = ["Chun-Li", "Ken Masters"];
+	let dlc = ["Andy Bogard", "Chun-Li", "Joe Higashi", "Ken Masters"], sf = ["Chun-Li", "Ken Masters"], char = character;
 	if (dlc.includes(character)) {
-		if (sf.includes(character)) character = character + 'street-fighter'
-		character = character + '-dlc'
+		if (sf.includes(character)) char = char + '-street-fighter'
+		char = char + '-dlc'
 	}
 		
-    return chartImg[character] + '-' + character.toLowerCase().replace('.','').replaceAll(' ','-').replace('ganacci','gannaci');
+    return chartImg[character] + '-' + char.toLowerCase().replace('.','').replaceAll(' ','-').replace('ganacci','gannaci');
   }
 };
