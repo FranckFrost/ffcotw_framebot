@@ -162,6 +162,8 @@ module.exports = {
 	
     // Validate extra names.
     if (char.includes('Jenet')) return 'B. Jenet';
+    if (char.includes('Big') || char.includes('big')) return 'Mr. Big';
+    if (char.includes('Chun')) return 'Chun-Li';
     const chart = {
       'Billy': 'Billy Kane',
       'Cristiano': 'Cristiano Ronaldo',
@@ -179,9 +181,6 @@ module.exports = {
       'Vox': 'Vox Reaper',
       'Reaper': 'Vox Reaper',
       'Ken': 'Ken Masters',
-      'Chunli': 'Chun-Li',
-      'Chun-li': 'Chun-Li',
-      'Chun Li': 'Chun-Li',
       'Joe': 'Joe Higashi',
       'Andy': 'Andy Bogard'
     };
@@ -244,10 +243,12 @@ module.exports = {
       'Chun-Li': '176197878920',
       'Joe Higashi': '175855573519',
       'Ken Masters': '175240207318',
+      'Mr. Big': '176415209021',
     };
-	let dlc = ["Andy Bogard", "Chun-Li", "Joe Higashi", "Ken Masters"], sf = ["Chun-Li", "Ken Masters"], char = character;
+	let dlc = ["Andy Bogard", "Chun-Li", "Joe Higashi", "Ken Masters", "Mr. Big"], sf = ["Chun-Li", "Ken Masters"], aof = ["Mr. Big"], char = character;
 	if (dlc.includes(character)) {
 		if (sf.includes(character)) char = char + '-street-fighter'
+		if (aof.includes(character)) char = char + '-art-of-fighting'
 		char = char + '-dlc'
 	}
 		
