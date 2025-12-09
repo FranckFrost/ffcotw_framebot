@@ -183,6 +183,8 @@ function getCharacter(character) {
 	
     // Validate extra names.
     if (char.includes('Jenet')) return 'B. Jenet';
+    if (char.includes('Big')) return 'Mr. Big';
+    if (char.includes('Chun')) return 'Chun-Li';
     const chart = {
       'Billy': 'Billy Kane',
       'Cristiano': 'Cristiano Ronaldo',
@@ -200,9 +202,6 @@ function getCharacter(character) {
       'Vox': 'Vox Reaper',
       'Reaper': 'Vox Reaper',
       'Ken': 'Ken Masters',
-      'Chunli': 'Chun-Li',
-      'Chun-li': 'Chun-Li',
-      'Chun Li': 'Chun-Li',
       'Joe': 'Joe Higashi',
       'Andy': 'Andy Bogard'
     };
