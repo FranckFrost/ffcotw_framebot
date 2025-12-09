@@ -183,7 +183,7 @@ function getCharacter(character) {
 	
     // Validate extra names.
     if (char.includes('Jenet')) return 'B. Jenet';
-    if (char.includes('Big')) return 'Mr. Big';
+    if (char.includes('Big') || char.includes('big')) return 'Mr. Big';
     if (char.includes('Chun')) return 'Chun-Li';
     const chart = {
       'Billy': 'Billy Kane',
