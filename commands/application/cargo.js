@@ -120,7 +120,7 @@ module.exports = {
             car = await response.text()
             s = car.indexOf(ind) + ind.length
             let image1 = car.slice(s,car.indexOf("\"",s))
-            const embed1 = new MessageEmbed().setImage(image1)
+            const embed1 = new MessageEmbed().setImage(image1).setURL(link)
             embeds.push(embed1)
           }
   
@@ -130,7 +130,7 @@ module.exports = {
             car = await response.text()
             s = car.indexOf(ind) + ind.length
             let image2 = car.slice(s,car.indexOf("\"",s))
-            const embed2 = new MessageEmbed().setImage(image2)
+            const embed2 = new MessageEmbed().setImage(image2).setURL(link)
             embeds.push(embed2)
           }
   
@@ -140,7 +140,7 @@ module.exports = {
             car = await response.text()
             s = car.indexOf(ind) + ind.length
             let image3 = car.slice(s,car.indexOf("\"",s))
-            const embed3 = new MessageEmbed().setImage(image3)
+            const embed3 = new MessageEmbed().setImage(image3).setURL(link)
             embeds.push(embed3)
           }
         }
