@@ -103,7 +103,6 @@ module.exports = {
         embed.setFooter({ text: 'Got feedback? Join the COTW server: discord.gg/ChEEUuZwqS', iconURL: 'https://cdn.iconscout.com/icon/free/png-128/discord-3-569463.png' });
 		if (hitboxes.length === 0) {
           embed.addField('No image was found for this move', 'Feel free to share with Franck Frost if you have one.', true);
-          embeds.push(embed)
         } else {
           let ind = "url\":\"", indw = "width\":", indh = "height\":", sw, sh, w, w1, w2, w3, h, h1, h2, h3, canvas, canvas2, canvas3
           
@@ -112,26 +111,25 @@ module.exports = {
           let car = await response.text()
           let s = car.indexOf(ind) + ind.length
           let image = car.slice(s,car.indexOf("\"",s))
-          embed.setImage(image)
-          embeds.push(embed)
 
           if (hitboxes.length > 0) {
 			sw = car.indexOf(indw) + indw.length ; sh = car.indexOf(indh) + indh.length
 			w =+ car.slice(sw,car.indexOf(",",sw)) ; h =+ car.slice(sh,car.indexOf(",",sh))
-			
+			image = await loadImage(car.slice(s,car.indexOf("\"",s)))
+			  
             url = "https://dreamcancel.com/w/api.php?action=query&format=json&prop=imageinfo&titles=File:" + encodeURIComponent(hitboxes.shift()) + "&iiprop=url|size"
             response = await fetch(url)
             car = await response.text()
             s = car.indexOf(ind) + ind.length ; sw = car.indexOf(indw) + indw.length ; sh = car.indexOf(indh) + indh.length
 			w1 =+ car.slice(sw,car.indexOf(",",sw)) ; h1 =+ car.slice(sh,car.indexOf(",",sh))
+			const image1 = await loadImage(car.slice(s,car.indexOf("\"",s)))
 
 			canvas = createCanvas(w+w1, Math.max(h,h1)) ; const cs = canvas.getContext('2d')
-			image = await loadImage(image) ; const image1 = await loadImage(car.slice(s,car.indexOf("\"",s)))
 			cs.drawImage(image, 0, Math.max(h,h1)-h)
 			cs.drawImage(image1, w, Math.max(h,h1)-h1)
 			
-			file = new MessageAttachment(canvas.toBuffer(), 'img.png')
-			embed.setImage('attachment://img.png')
+			if (hitboxes.length === 0) file = new MessageAttachment(canvas.toBuffer(), 'img.png')
+			image = 'attachment://img.png'
             //const embed1 = new MessageEmbed().setImage(image1).setURL(link)
             //embeds.push(embed1)
           }
@@ -148,8 +146,7 @@ module.exports = {
 			cs2.drawImage(canvas, 0, Math.max(h,h1,h2)-Math.max(h,h1))
 			cs2.drawImage(image2, w+w1, Math.max(h,h1,h2)-h2)
 			  
-			file = new MessageAttachment(canvas2.toBuffer(), 'img.png')
-			embed.setImage('attachment://img.png')
+			if (hitboxes.length === 0) file = new MessageAttachment(canvas2.toBuffer(), 'img.png')
           }
   
           if (hitboxes.length > 0) {
@@ -158,16 +155,18 @@ module.exports = {
             car = await response.text()
             s = car.indexOf(ind) + ind.length ; sw = car.indexOf(indw) + indw.length ; sh = car.indexOf(indh) + indh.length
 			w3 =+ car.slice(sw,car.indexOf(",",sw)) ; h3 =+ car.slice(sh,car.indexOf(",",sh))
-			image3 = await loadImage(car.slice(s,car.indexOf("\"",s)))
+			const image3 = await loadImage(car.slice(s,car.indexOf("\"",s)))
 
 			canvas3 = createCanvas(w+w1+w2+w3, Math.max(h,h1,h2,h3)) ; const cs3 = canvas3.getContext('2d')
 			cs3.drawImage(canvas2, 0, Math.max(h,h1,h2,h3)-Math.max(h,h1,h2))
 			cs3.drawImage(image3, w+w1+w2, Math.max(h,h1,h2,h3)-h3)
 			  
 			file = new MessageAttachment(canvas3.toBuffer(), 'img.png')
-			embed.setImage('attachment://img.png')
           }
+		  embed.setImage(image)
         }
+		embeds.push(embed)
+		
       if (file !== undefined) {
 		  await interaction.editReply({embeds: embeds, files:[file]});
 	  }else{
