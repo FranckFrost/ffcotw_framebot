@@ -68,7 +68,7 @@ module.exports = {
       const link = 'https://dreamcancel.com/wiki/Fatal_Fury:_City_of_the_Wolves/' + encodeURIComponent(character);
       const img = this.getCharacterImg(character);
       
-      const embeds = [] ; let file
+      let files = null
       const embed = new MessageEmbed()
         .setColor('#0x1a2c78')
         .setTitle(character)
@@ -104,7 +104,9 @@ module.exports = {
 		if (hitboxes.length === 0) {
           embed.addField('No image was found for this move', 'Feel free to share with Franck Frost if you have one.', true);
         } else {
-          let ind = "url\":\"", indw = "width\":", indh = "height\":", sw, sh, w, w1, w2, w3, h, h1, h2, h3, canvas, canvas2, canvas3
+          await interaction.editReply({embeds: [embed]});
+		 
+		  let ind = "url\":\"", indw = "width\":", indh = "height\":", sw, sh, w, w1, w2, w3, h, h1, h2, h3, canvas, canvas2, canvas3
           
           let url = "https://dreamcancel.com/w/api.php?action=query&format=json&prop=imageinfo&titles=File:" + encodeURIComponent(hitboxes.shift()) + "&iiprop=url|size"
           let response = await fetch(url)
@@ -128,7 +130,8 @@ module.exports = {
 			cs.drawImage(image, 0, Math.max(h,h1)-h)
 			cs.drawImage(image1, w, Math.max(h,h1)-h1)
 			
-			if (hitboxes.length === 0) file = new MessageAttachment(canvas.toBuffer(), 'img.png')
+			files = []
+			if (hitboxes.length === 0) files[0] = new MessageAttachment(canvas.toBuffer(), 'img.png')
 			image = 'attachment://img.png'
             //const embed1 = new MessageEmbed().setImage(image1).setURL(link)
             //embeds.push(embed1)
@@ -146,7 +149,7 @@ module.exports = {
 			cs2.drawImage(canvas, 0, Math.max(h,h1,h2)-Math.max(h,h1))
 			cs2.drawImage(image2, w+w1, Math.max(h,h1,h2)-h2)
 			  
-			if (hitboxes.length === 0) file = new MessageAttachment(canvas2.toBuffer(), 'img.png')
+			if (hitboxes.length === 0) files[0] = new MessageAttachment(canvas2.toBuffer(), 'img.png')
           }
   
           if (hitboxes.length > 0) {
@@ -161,18 +164,13 @@ module.exports = {
 			cs3.drawImage(canvas2, 0, Math.max(h,h1,h2,h3)-Math.max(h,h1,h2))
 			cs3.drawImage(image3, w+w1+w2, Math.max(h,h1,h2,h3)-h3)
 			  
-			file = new MessageAttachment(canvas3.toBuffer(), 'img.png')
+			files[0] = new MessageAttachment(canvas3.toBuffer(), 'img.png')
           }
 		  embed.setImage(image)
         }
-		embeds.push(embed)
 		
-      if (file !== undefined) {
-		  await interaction.editReply({embeds: embeds, files:[file]});
-	  }else{
-		  await interaction.editReply({embeds: embeds});
-	  }
-      return;
+		await interaction.editReply({embeds: [embed], files: files});
+		return;
       } catch (error) {
         console.log("Error finishing cargo request", error);
         await interaction.editReply('There was an error while processing your **cargo** request, reach out to <@259615904772521984>. Refer to the [Google sheet](LINK HERE) to look for the data.');
